@@ -1,0 +1,4 @@
+res://player/player.gd
+res://tours/101_animated_sprites_overview/101_in_game.tscn
+res://addons/godot_tours/ui/theme_welcome_menu.tres
+res://player/player.tscn
