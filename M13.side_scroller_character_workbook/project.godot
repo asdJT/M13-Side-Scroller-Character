@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="M13. Side-Scroller Character (Workbook)"
-run/main_scene="res://level.tscn"
+run/main_scene="uid://d2fsyhc1u5gcb"
 config/features=PackedStringArray("4.5", "Forward Plus")
 run/max_fps=60
 config/icon="res://icon_platformer_small.png"
