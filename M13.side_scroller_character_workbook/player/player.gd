@@ -53,6 +53,18 @@ func _ready() -> void:
 	coyote_timer.one_shot = true
 	add_child(coyote_timer)
 
+func play_tween_jump() -> void:
+	var tween := create_tween()
+	tween.tween_property(animated_sprite, "scale", Vector2(1.15, 0.86), 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(animated_sprite, "scale", Vector2(0.86, 1.15), 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(animated_sprite, "scale", Vector2.ONE, 0.15)
+
+func play_tween_touch_ground() -> void:
+	var tween := create_tween()
+	tween.tween_property(animated_sprite, "scale", Vector2(1.1, 0.9), 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(animated_sprite, "scale", Vector2(0.9, 1.1), 0.1).set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(animated_sprite, "scale", Vector2.ONE, 0.1)
+
 func _physics_process(delta: float) -> void:
 	direction_x = signf(Input.get_axis("move_left", "move_right"))
 
@@ -88,7 +100,6 @@ func process_ground_state(delta: float) -> void:
 	elif not is_on_floor():
 		_transition_to_state(State.FALL)
 
-
 func process_jump_state(delta: float) -> void:
 	if direction_x != 0:
 		velocity.x += air_acceleration * direction_x * delta
@@ -104,7 +115,6 @@ func process_jump_state(delta: float) -> void:
 		_transition_to_state(State.FALL)
 	elif Input.is_action_just_pressed("jump") and jump_count < MAX_JUMPS:
 		_transition_to_state(State.DOUBLE_JUMP)
-
 
 func process_fall_state(delta: float) -> void:
 	if direction_x != 0.0:
@@ -147,6 +157,7 @@ func _transition_to_state(new_state: State) -> void:
 			velocity.x = direction_x * jump_horizontal_velocity
 			jump_count = 1
 			animated_sprite.play("jump")
+			play_tween_jump()
 
 		State.DOUBLE_JUMP:
 			velocity.y = double_jump_speed
@@ -154,6 +165,7 @@ func _transition_to_state(new_state: State) -> void:
 			velocity.x = direction_x * jump_horizontal_velocity
 			jump_count = MAX_JUMPS
 			animated_sprite.play("jump")
+			play_tween_jump()
 			
 		State.FALL:
 			if jump_count == MAX_JUMPS:
@@ -167,6 +179,8 @@ func _transition_to_state(new_state: State) -> void:
 			
 		State.GROUND:
 			jump_count = 0
+			if previous_state == State.FALL:
+				play_tween_touch_ground()
 
 func calculate_jump_speed (height: float, time_to_peak: float) -> float:
 	return (-2.0 * height) / time_to_peak

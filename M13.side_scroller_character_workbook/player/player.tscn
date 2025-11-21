@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://3xjba3qqicu2"]
+[gd_scene load_steps=21 format=3 uid="uid://3xjba3qqicu2"]
 
 [ext_resource type="Texture2D" uid="uid://d07un6ita4esd" path="res://assets/lucy/idle/idle.png" id="1_2ieo8"]
 [ext_resource type="Script" uid="uid://bdttwo0sv70jp" path="res://player/player.gd" id="1_ebec5"]
@@ -14,6 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://c030uv7w2bgs3" path="res://assets/lucy/run/003.png" id="9_c35mf"]
 [ext_resource type="Texture2D" uid="uid://dw8wfsxexlcit" path="res://assets/lucy/run/004.png" id="10_65viv"]
 [ext_resource type="Texture2D" uid="uid://pk8wb3owg84f" path="res://assets/lucy/run/005.png" id="11_x7c3f"]
+[ext_resource type="Texture2D" uid="uid://vcwnftmgqlr4" path="res://assets/lucy/dust_particle.png" id="15_wodsf"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_bjvpn"]
 animations = [{
@@ -92,16 +93,37 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_s7qer"]
 size = Vector2(8, 12)
 
+[sub_resource type="Curve" id="Curve_32hag"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_tqiix"]
+curve = SubResource("Curve_32hag")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_e7oew"]
+particle_flag_disable_z = true
+initial_velocity_min = 1.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -8, 0)
+scale_min = 0.7
+scale_max = 1.1999999
+scale_curve = SubResource("CurveTexture_tqiix")
+
 [node name="player" type="CharacterBody2D"]
 collision_mask = 2
 script = ExtResource("1_ebec5")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -11)
 sprite_frames = SubResource("SpriteFrames_bjvpn")
 animation = &"jump"
+offset = Vector2(0, -11)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -6)
 shape = SubResource("RectangleShape2D_s7qer")
+
+[node name="Dust" type="GPUParticles2D" parent="."]
+unique_name_in_owner = true
+texture = ExtResource("15_wodsf")
+process_material = SubResource("ParticleProcessMaterial_e7oew")
