@@ -35,6 +35,7 @@ var current_gravity := 0.0
 var current_state: State = State.GROUND
 
 @onready var animated_sprite: AnimatedSprite2D = %AnimatedSprite2D
+@onready var dust: GPUParticles2D = %Dust
 
 @onready var jump_speed := calculate_jump_speed(jump_height, jump_time_to_peak)
 @onready var jump_gravity := calculate_jump_gravity(jump_height, jump_time_to_peak)
@@ -85,6 +86,8 @@ func _physics_process(delta: float) -> void:
 
 func process_ground_state(delta: float) -> void:
 	var is_moving := absf(direction_x) > 0.0
+	dust.emitting = is_moving
+	
 	if is_moving:
 		velocity.x += acceleration * direction_x * delta
 		velocity.x = clampf(velocity.x, -max_speed, max_speed)
@@ -158,6 +161,7 @@ func _transition_to_state(new_state: State) -> void:
 			jump_count = 1
 			animated_sprite.play("jump")
 			play_tween_jump()
+			dust.emitting = true
 
 		State.DOUBLE_JUMP:
 			velocity.y = double_jump_speed
@@ -166,6 +170,7 @@ func _transition_to_state(new_state: State) -> void:
 			jump_count = MAX_JUMPS
 			animated_sprite.play("jump")
 			play_tween_jump()
+			dust.emitting = true
 			
 		State.FALL:
 			if jump_count == MAX_JUMPS:
